@@ -237,19 +237,19 @@ np.savetxt('out.csv',data.T,delimiter=',',fmt='%.4f')
 ```
 Explanations.
 import the library of matrix calculations. 
-```
+```python
 import numpy as np
 from numpy import genfromtxt
 ```
 define constants: the number of neural network outputs (OUT_CLASSES), the number of neurons in the hidden layer (HIDDEN_LEN), the learning rate (SPEED_EDICATION), the number of epochs (EPOCHS) 
-```
+```python
 OUT_CLASSES=10
 HIDDEN_LEN=300
 SPEED_EDICATION=0.0000001
 EPOCHS=150000
 ```
 create a training input set (train_x) and a training output set (train_y) Similarly, create a test input set (test_x) and a test output set (test_y) 
-```
+```python
 train = genfromtxt('fashion_train.csv', delimiter=',')
 train=train[1:,:]
 train_x=np.array(train[:,:-1])
@@ -264,17 +264,17 @@ train_y=out.T
 ```
 
 set the value of the power series 
-```
+```python
 power1=5
 power2=5
 ```
 fill the weights with random values from -1 to 1 
-```
+```python
 weight1=2*np.random.random((power1*int(train_x.size/len(train_x)),HIDDEN_LEN))-1
 weight2=2*np.random.random((HIDDEN_LEN*power2,OUT_CLASSES))-1
 ```
 create arrays that contain sequences from 0 to power1-1 for each element of the input array for training and test inputs, respectively (that is, for an input array of 3 elements and 2 sets and power1 = 4, this construction will create power_arr = [[0,1, 2,3,0,1,2,3,0,1,2,3], [0,1,2,3,0,1,2,3,0,1,2,3]]) 
-```
+```python
 power1_arr = np.tile(np.arange(power1),train_x.size).reshape(train_x.size,power1)
 power2_arr = np.tile(np.arange(power2),HIDDEN_LEN*len(train_x)).reshape(HIDDEN_LEN*len(train_x),power2)
 power1_arr_test = np.tile(np.arange(power1),test_x.size).reshape(test_x.size,power1)
@@ -282,14 +282,14 @@ power2_arr_test = np.tile(np.arange(power2),HIDDEN_LEN*len(test_x)).reshape(HIDD
 ```
 
 create an input layer associated with weights (virtual_train_x and virtual_test_x, respectively, for the training and test set) 
-```
+```python
 train_x2=np.reshape(train_x,(train_x.size,1))
 test_x2=np.reshape(test_x,(test_x.size,1))
 virtual_train_x = np.power(train_x2,power1_arr).reshape(len(train_x),int(power1*train_x.size/len(train_x)))
 virtual_test_x = np.power(test_x2,power1_arr_test).reshape(len(test_x),int(power1*test_x.size/len(test_x)))
 ```
 create data in advance 
-```
+```python
 someones = np.ones(power1)
 
 persent_train = np.ones(OUT_CLASSES).reshape(OUT_CLASSES,1)
@@ -303,42 +303,42 @@ error_test_list_persent=[]
 error_train_list_persent=[]
 ```
 start the learning cycle 
-```
+```python
 for step in range(EPOCHS):
 ```
 calculate the values at the output of the input layer of the neural network (which are set at the input of the hidden layer) 
-```
+```python
 hidden_layer = 1/(1+np.exp(-(np.dot(virtual_train_x,weight1))))
 ```
 create a layer from the hidden layer (hidden_layer), which is associated with the weights (virtual_hidden_layer_train) 
-```
+```python
 hidden_layer2 = np.reshape(hidden_layer,(hidden_layer.size,1))
 virtual_hidden_layer_train = np.power(hidden_layer2,power2_arr).reshape(len(hidden_layer),int(power2*hidden_layer.size/len(hidden_layer)))
 ```
 calculate the output of the neurons of the hidden layer 
-```
+```python
 out_with_error = 1/(1+np.exp(-(np.dot(virtual_hidden_layer_train,weight2))))
 ```
 calculate the output error 
-```
+```python
 error_w2 = (train_y-out_with_error)
 ```
 change weights on hidden-output layers 
-```
+```python
 weight2+=SPEED_EDICATION*virtual_hidden_layer_train.T.dot(error_w2*out_with_error*(1-out_with_error))
 ```
 We find an error on the hidden real layer (error_w1), and also then we find an error on the hidden virtual layer (error_w1_virtual) 
-```
+```python
 error_w1 = error_w2.dot(weight2.T)
 error_w1_reshaped = np.reshape(error_w1,(int(error_w1.size/power1),power1))
 error_w1_virtual = np.reshape(np.dot(error_w1_reshaped,someones),(len(error_w1),int(error_w1.size/power1/len(error_w1))))
 ```
 change the weights of the input-hidden layer 
-```
+```python
 weight1+=SPEED_EDICATION*virtual_train_x.T.dot(error_w1_virtual)
 ```
 We calculate the error on the test set. 
-```
+```python
 hidden_layer_test = 1/(1+cp.exp(-(cp.dot(virtual_test_x,weight1))))
 hidden_layer2_test = cp.reshape(hidden_layer_test,(hidden_layer_test.size,1))
 virtual_hidden_layer_test = cp.power(hidden_layer2_test,power2_arr_test).reshape(len(hidden_layer_test),int(power2*hidden_layer_test.size/len(hidden_layer_test)))
@@ -346,7 +346,7 @@ out_with_error_test = 1/(1+np.exp(-(np.dot(virtual_hidden_layer_test,weight2))))
 error_w2_test = (test_y-out_with_error_test)
 ```
 We get the root-mean-square error and the percentage error 
-```
+```python
 p_train = cp.dot(cp.abs(train_y-cp.around(out_with_error)),persent_train)
 p_test = cp.dot(cp.abs(test_y-cp.around(out_with_error_test)),persent_test)
 
@@ -354,12 +354,12 @@ err_p_train = 100*(1-cp.sum(np.logical_and(p_train,True))/len(train_y))
 err_p_test = 100*(1-cp.sum(np.logical_and(p_test,True))/len(test_y))
 ```
 We get the maximum error on the test set 
-```
+```python
 if max_persent<err_p_test:
         max_persent=err_p_test
 ```
 Add errors to lists and display them on the screen 
-```
+```python
 error_test_list.append(cp.sum(cp.square(error_w2_test))/2)
 error_train_list.append(cp.sum(cp.square(error_w2))/2)
 error_test_list_persent.append(err_p_test)
@@ -370,7 +370,7 @@ print("step =",step,"/",EPOCHS," error train = ",err_p_train,"%"," error test = 
 print("step =",step,"/",EPOCHS," max persent test = ",max_persent,"%")
 ```
 After the completion of the training epochs, save the resulting lists to a file for visualization 
-```
+```python
 list_size = len(error_train_list)
 data = error_train_list
 data.extend(error_test_list)
