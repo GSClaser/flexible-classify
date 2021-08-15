@@ -1,70 +1,70 @@
-##Гибкий нейрон: Виртуальные и Действительные слои
-Сегодня мы поговорим о нейронах и степенных рядах. Поехали!
+##flexible neuron: virtual and real layers 
+Today we will talk about neurons and power series. Let's go! 
 
-Рассмотрим функцию синуса.
+Consider the sine function. 
 ![dataset](https://hsto.org/webt/yc/tm/aw/yctmawjirmngqyyq7_pggbpd8g0.png)
-Разложим синус в ряд Тейлора
+We can expand sine in a Taylor series 
 $$
 	sin(x) = x-\frac{x^3}{3!}+\frac{x^5}{5!}+...+\sum_{n=1}^{\infty}\frac{(-1)^nx^{2n+1}}{(2n+1)!}
 $$
-Возьмем n = 0
+Let's set n = 0
 $$
 	sin(x) = x
 $$
 ![graph1](https://hsto.org/r/w1560/webt/et/tn/cn/ettncnhyazhzbxpirmthkashytq.png)
-возьмем n=1
+Let's set n=1
 $$
 	sin(x) = x-\frac{x^3}{6}
 $$
 ![graph2](https://hsto.org/r/w1560/webt/dg/2p/mr/dg2pmrowawr8ifujv-ye6fwbtx0.png)
 
-возьмем n = 2
+Let's set n = 2
 $$
 	sin(x) = x - \frac{x^3}{6} + \frac{x^5}{120}
 $$
 ![graph3](https://hsto.org/r/w1560/webt/7y/xn/my/7yxnmyxwnshgznlbltvu7qtqhye.png)
-возьмем n = 3
+Let's set n = 3
 $$
 	sin(x) = x - \frac{x^3}{6} + \frac{x^5}{120} - \frac{x^7}{5040}
 $$
 ![graph4](https://hsto.org/r/w1560/webt/cw/5x/xr/cw5xxrxqcowrfh6fkxxxdkgk-ak.png)
-Как можно заметить,с увеличением степенного ряда также увеличивается и точность
+As you can see, when we increase the order of the power series, the accuracy of the reproduced function also increases 
 
-Рассмотрим один нейрон с одним входом и одним выходом
+Let's consider a neuron with one input and one output. 
 
-Как вы считаете, сколько входов должно быть у нейрона с одним входом и одним выходом для корректной работы?
+How many inputs should a neuron have with one input and one output for correct operation? 
 
-У этого нейрона должно быть два входа. Один вход - x (переменная, которая поступает на вход нейрона) и единичка (биас).
+The neuron must have two inputs. One input is x (a variable that goes to the input of the neuron) and 1(bias). 
 
-Следующий вопрос. Какое преобразование нужно сделать с любым числом для того,чтобы превратить это число в 1 (единичку).
+Next question. What conversion must be done with any number to convert that number to 1? 
 
-Правильно, возвести любое число в нулевую степень.
+That's right, set any number to the zero power. 
 
-Предположим,что биас (единичка) - это x в нулевой степени.Тогда мы на выходе нейрона имеем следующее выражение
+Suppose that bias(1) is x to the zero power, we have the following expression at the output of the neuron 
 $$
 	y = f(w_0x^0+w_1x^1);
 $$
-Где f(x)-функция активации.Заметим,что конструкция
+Where f(x) is the activation function. Note that the construction 
 $$
 	w_0x^0+w_1x^1
 $$
-очень похожа на начало степенного ряда.Мы можем усложнить конструкцию,например сделать такую вешь
+is very similar to the beginning of a power series. We can complicate the construction, for example,make such a thing 
 $$
 	y=f(w_0x^0+w_1x^1+w_2x^2);
 $$
-или
+or
 $$
 	y=f(w_0x^0+w_1x^1+w_2x^2+w_3x^3);
 $$
 
-если обобщить эту формулу для одного нейрона с одним входом и одним выходом,получаем следующее выражение
+if we generalize this formula for one neuron with one input and one output, we get the following expression 
 $$
 	y=f(\sum_{n=1}^{\infty}{x^n*w_n})
 $$
 
-Примерная схема нейросети с двумя входными (виртуальными) нейронами,одним выходным и шестью(действительными) нейронами на входе нейросети.
+An approximate diagram of a neural network with two input (virtual) neurons, one output and six (real) neurons at the input of the neural network. 
 ![neural_net_img](https://hsto.org/r/w1560/webt/jy/1j/pi/jy1jpihbw8mgxysr1ffe4netbau.png)
-x,x2,x3-это виртуальные входы нейросети,а x^0,x^1,x^2,x2^0,x2^1,x2^2 - действительные (связанные с весами)
+x,x2,x3-is virtual inputs of the neural network ,а x^0,x^1,x^2,x2^0,x2^1,x2^2 - is real inputs(connected to weights) 
 ```
 err2=w1*err1
 err3=w2*err1
@@ -81,74 +81,74 @@ w4+=speed_edication*x2^0*err3*f(x2^0)*(f-f(x2^0))
 w5+=speed_edication*x2^1*err2*f(x2^1)*(1-f(x2^1))
 w6+=speed_edication*x2^2*err3*f(x2^2)*(f-f(x2^2))
 ```
-где f(x) = 1/(1+exp(-x))
+where f(x) = 1/(1+exp(-x))
 
-Постараемся обобщить полученную информацию.Предположим у нас есть входной слой с n данными,скрытый слой с m данными и выходной слой с k данными.
-Мы создаем от входного слоя слой с n * power1 данными.Положим,что входной(виртуальный) слой содержит следущие данные 
+Let's try to summarize the obtained information. Suppose we have an input layer with n data, a hidden layer with m data and an output layer with k data. 
+We create from the input layer the layer with n * power1 data. Suppose the input (virtual) layer contains the following data 
 $$
 INPUT=[x_1,x_2,x_3,...,x_n]
 $$
-Тогда входной(действительный) слой получается следующим образом
+Then the input (real) layer is obtained as follows 
 $$
 INPUT_REAL=[1,x_1,x_1^2,x_1^3,...,x_1^{power1},1,x_2,x_2^2,x_2^3,...,x_2^{power1},...,1,x_n,x_n^2,x_n^3,...,x_n^{power1}]
 $$
-Потом идет слой нейронов входного слоя
+Then comes the layer of neurons of the input layer 
 $$
 OUTINPUT=[neuron_1,neuron_2,...,neuron_m]
 $$
-Каждый из нейронов входного слоя получает на вход сумму произведений входного(действительного) слоя на соответстующие веса,и проходит через функцию активации.
-Скрытый(виртуальный) слой имеет вид:
+Each of the neurons of the input layer receives at the input the sum of the products of the input (real)layer by the corresponding weights, and passes through the activation function.
+The hidden (virtual)layer looks like: 
 $$
 HIDDEN=[xx_1,xx_2,xx_3,...,xx_m]
 $$
-Он принимает данные с выходов нейронов входного слоя.
-Тогда скрытый(действительный) слой получается следующим образом
+It takes data from the outputs of the neurons of the input layer.
+Then the hidden (real) layer is obtained as follows 
 $$
 HIDDENREAL=[1,xx_1,xx_1^2,xx_1^3,...,xx_1^{power2},1,xx_2,xx_2^2,xx_2^3,...,xx_2^{power2},...1,xx_m,xx_m^2,xx_m^3,...,xx_m^{power2}]
 $$
-Потом идет слой нейронов скрытого слоя слоя
+This is neurons of the hidden layer 
 $$
 OUTHIDDEN=[neuronHidden_1,neuronHidden_2,...,neuronHidden_k]
 $$
-Каждый из нейронов скрытого слоя слоя получает на вход сумму произведений скрытого(действительного) слоя на соответстующие веса,и проходит через функцию активации.
+Each of the neurons of the hidden layer of the layer receives as input the sum of the products of the hidden (real) layer by the corresponding weights, and passes through the activation function.
 
-Далее находим ошибку между действительными значениями и значениями для обучения тренировочного набора.
+We find the error between the actual values and the values for training the training set. 
 $$
 ERROR=[error_1,error_2,...,error_k]
 $$
-Ошибка  на скрытом(действительном) слое образуется произведением скрытого(действительного) слоя на ошибку на выходе нейросети.В нашем случае функцией активации будет сигмоида
-Ошибка на скрытом (действительном) слое равна:
+
+The error on the hidden (real) layer is equal: 
 
 $$
-ERRORHIDDEN = \sum_{n=1}^{k}ERROR_kW_{j,k}
+ERRORHIDDEN = \sum_{n=1}^{k}ERROR_kW2_{j,k}
 $$
-где j=[0,m]
+where j=[0,m]
 
-Пусть ERRORHIDDEN представляет массив
+Let's ERRORHIDDEN represents an array 
 $$
 ERRORHIDDEN = [eh_1,eh_2,eh_3,...,eh_m]
 $$
 
-тогда ошибка на виртуальном скрытом слое равна
+then the error on the virtual hidden layer is equal
 $$
 ERRORVIRTUALHIDDEN = [eh_1+eh_2+eh_{power1},eh_{power1+1}+eh_{power1+2}+...+eh_{2*power1},...,eh_{(m-1)*power1+1}+eh_{(m-1)*power1+2}+...+eh_{m*power1}]
 $$
-Изменение весов входного-скрытого слоя.
+Change the weights of the input-hidden layer. 
 $$
 W1_{i,j}+=SPEEDEDICATION*ERRORVIRTUALHIDDEN_i*INPUTREAL_j*\frac{df(x)}{dx}_i
 $$
-Изменение весов скрытого-выходного слоя.
+Change the weights of the hidden-output layer. 
 $$
 W2_{i,j}+=SPEEDEDICATION*ERROR_i*HIDDENREAL_j*\frac{df(x)}{dx}_i
 $$
-где f(x) - выход нейронов соответствующего уровня.
-SEEDEDICATION - скорость обучения нейросети.
+where f(x) - output of neurons of the corresponding level.
+SEEDEDICATION - learning rate of the neural network. 
 
 
-Напишем нейронную сеть,которая будет классифицировать наборы одежды fashion_mnist (футболки, кеды, штаны и т.д.). На вход нейросети подается 28*28 8-битная черно-белая картинка. Нейросеть содержит скрытый слой из 300 нейронов,и имеет 10 выходов. При обучении набора каждому из предметов одежды назначен класс от 0 до 10. Нейросеть должна научиться распознавать элементы одежды (отличать брюки от футболок и т.д.).
+Let's write a neural network that will classify fashion_mnist clothing sets (t-shirts, sneakers, pants, etc.). A set of 28 * 28 8-bit black-and-white picture is sent to the input of the neural network. The neural network contains a hidden layer of 300 neurons, and has 10 outputs.When training a set of clothes, each of the garments is assigned a class from 0 to 10.The neural network must learn how to correctly classify clothing items (distinguish pants from T-shirts, etc.). 
 
-Я скачал тренировочный и тестовый наборы одежды с гитхаба по [ссылке](https://github.com/ymattu/fashion-mnist-csv)
-#####Написал простую нейросеть для проверки.
+I downloaded training and test sets of clothes from github by  [refs](https://github.com/ymattu/fashion-mnist-csv)
+#####I wrote a simple neural network for testing. 
 ```python
 import numpy as np
 from numpy import genfromtxt
@@ -235,20 +235,20 @@ data.extend(error_test_list_persent)
 data = np.reshape(data,(4,list_size))
 np.savetxt('out.csv',data.T,delimiter=',',fmt='%.4f')
 ```
-Пояснения.
-импортируем библиотеку матричных вычислений.
+Explanations.
+import the library of matrix calculations. 
 ```
 import numpy as np
 from numpy import genfromtxt
 ```
-определяем константы.Это число выходов нейросети(OUT_CLASSES),количество нейронов в скрытом слою (HIDDEN_LEN),скорость обучения(SPEED_EDICATION),количество эпох(EPOCHS)
+define constants: the number of neural network outputs (OUT_CLASSES), the number of neurons in the hidden layer (HIDDEN_LEN), the learning rate (SPEED_EDICATION), the number of epochs (EPOCHS) 
 ```
 OUT_CLASSES=10
 HIDDEN_LEN=300
 SPEED_EDICATION=0.0000001
 EPOCHS=150000
 ```
-создаем тренировочный набор входных данных(train_x) и тренировочный набор выходных данных(train_y).Аналогичным образом создаем тестовый набор входных данных(test_x) и тестовый набор выходных данных(test_y)
+create a training input set (train_x) and a training output set (train_y) Similarly, create a test input set (test_x) and a test output set (test_y) 
 ```
 train = genfromtxt('fashion_train.csv', delimiter=',')
 train=train[1:,:]
@@ -263,17 +263,17 @@ np.put_along_axis(out,np.array(index_arr),1,axis=0)
 train_y=out.T
 ```
 
-устанавливаем значение степенных рядов
+set the value of the power series 
 ```
 power1=5
 power2=5
 ```
-заполняем значения весов случайными значениями от -1 до 1
+fill the weights with random values from -1 to 1 
 ```
 weight1=2*np.random.random((power1*int(train_x.size/len(train_x)),HIDDEN_LEN))-1
 weight2=2*np.random.random((HIDDEN_LEN*power2,OUT_CLASSES))-1
 ```
-создаем массивы,которые содержат последовательности от 0 до power1-1 для каждого элемента входного массива для тренировочного и тестового входов соответственно(то есть для входного массива из 3 элементов и 2 наборов и power1=4 эта конструкция создаст power_arr=[[0,1,2,3,0,1,2,3,0,1,2,3],[0,1,2,3,0,1,2,3,0,1,2,3]])
+create arrays that contain sequences from 0 to power1-1 for each element of the input array for training and test inputs, respectively (that is, for an input array of 3 elements and 2 sets and power1 = 4, this construction will create power_arr = [[0,1, 2,3,0,1,2,3,0,1,2,3], [0,1,2,3,0,1,2,3,0,1,2,3]]) 
 ```
 power1_arr = np.tile(np.arange(power1),train_x.size).reshape(train_x.size,power1)
 power2_arr = np.tile(np.arange(power2),HIDDEN_LEN*len(train_x)).reshape(HIDDEN_LEN*len(train_x),power2)
@@ -281,14 +281,14 @@ power1_arr_test = np.tile(np.arange(power1),test_x.size).reshape(test_x.size,pow
 power2_arr_test = np.tile(np.arange(power2),HIDDEN_LEN*len(test_x)).reshape(HIDDEN_LEN*len(test_x),power2)
 ```
 
-создаем связанный с весами слой(virtual_train_x и virtual_test_x соответственно для тренировочного и тестового набора)
+create an input layer associated with weights (virtual_train_x and virtual_test_x, respectively, for the training and test set) 
 ```
 train_x2=np.reshape(train_x,(train_x.size,1))
 test_x2=np.reshape(test_x,(test_x.size,1))
 virtual_train_x = np.power(train_x2,power1_arr).reshape(len(train_x),int(power1*train_x.size/len(train_x)))
 virtual_test_x = np.power(test_x2,power1_arr_test).reshape(len(test_x),int(power1*test_x.size/len(test_x)))
 ```
-предварительно создаем данные
+create data in advance 
 ```
 someones = np.ones(power1)
 
@@ -302,42 +302,42 @@ error_train_list=[]
 error_test_list_persent=[]
 error_train_list_persent=[]
 ```
-начинаем эпохи обучения
+start the learning cycle 
 ```
 for step in range(EPOCHS):
 ```
-вычисляем значения на выходе входного слоя нейросети(которые поступают на вход скрытого слоя)
+calculate the values at the output of the input layer of the neural network (which are set at the input of the hidden layer) 
 ```
 hidden_layer = 1/(1+np.exp(-(np.dot(virtual_train_x,weight1))))
 ```
-создаем из скрытого слоя(hidden_layer) слой,который связан с весами(virtual_hidden_layer_train)
+create a layer from the hidden layer (hidden_layer), which is associated with the weights (virtual_hidden_layer_train) 
 ```
 hidden_layer2 = np.reshape(hidden_layer,(hidden_layer.size,1))
 virtual_hidden_layer_train = np.power(hidden_layer2,power2_arr).reshape(len(hidden_layer),int(power2*hidden_layer.size/len(hidden_layer)))
 ```
-вычисляем выход нейронов скрытого слоя
+calculate the output of the neurons of the hidden layer 
 ```
 out_with_error = 1/(1+np.exp(-(np.dot(virtual_hidden_layer_train,weight2))))
 ```
-вычисляем ошибку на выходе
+calculate the output error 
 ```
 error_w2 = (train_y-out_with_error)
 ```
-корректируем весы на выходных - скрытых слоях
+change weights on hidden-output layers 
 ```
 weight2+=SPEED_EDICATION*virtual_hidden_layer_train.T.dot(error_w2*out_with_error*(1-out_with_error))
 ```
-Находим ошибку на скрытом действительном слое(error_w1),а также потом находим ошибку на скрытом виртуальном слое(error_w1_virtual)
+We find an error on the hidden real layer (error_w1), and also then we find an error on the hidden virtual layer (error_w1_virtual) 
 ```
 error_w1 = error_w2.dot(weight2.T)
 error_w1_reshaped = np.reshape(error_w1,(int(error_w1.size/power1),power1))
 error_w1_virtual = np.reshape(np.dot(error_w1_reshaped,someones),(len(error_w1),int(error_w1.size/power1/len(error_w1))))
 ```
-корректируем веса входного - скрытого слоя
+change the weights of the input-hidden layer 
 ```
 weight1+=SPEED_EDICATION*virtual_train_x.T.dot(error_w1_virtual)
 ```
-Вычисляем ошибку на тестовом наборе.
+We calculate the error on the test set. 
 ```
 hidden_layer_test = 1/(1+cp.exp(-(cp.dot(virtual_test_x,weight1))))
 hidden_layer2_test = cp.reshape(hidden_layer_test,(hidden_layer_test.size,1))
@@ -345,7 +345,7 @@ virtual_hidden_layer_test = cp.power(hidden_layer2_test,power2_arr_test).reshape
 out_with_error_test = 1/(1+np.exp(-(np.dot(virtual_hidden_layer_test,weight2))))
 error_w2_test = (test_y-out_with_error_test)
 ```
-Находим среднеквадратическую погрешность и ошибку в процентах
+We get the root-mean-square error and the percentage error 
 ```
 p_train = cp.dot(cp.abs(train_y-cp.around(out_with_error)),persent_train)
 p_test = cp.dot(cp.abs(test_y-cp.around(out_with_error_test)),persent_test)
@@ -353,12 +353,12 @@ p_test = cp.dot(cp.abs(test_y-cp.around(out_with_error_test)),persent_test)
 err_p_train = 100*(1-cp.sum(np.logical_and(p_train,True))/len(train_y))
 err_p_test = 100*(1-cp.sum(np.logical_and(p_test,True))/len(test_y))
 ```
-Находим максимальную ошибку на тестовом наборе
+We get the maximum error on the test set 
 ```
 if max_persent<err_p_test:
         max_persent=err_p_test
 ```
-Добавляем ошибки в списки и выводим их на экран
+Add errors to lists and display them on the screen 
 ```
 error_test_list.append(cp.sum(cp.square(error_w2_test))/2)
 error_train_list.append(cp.sum(cp.square(error_w2))/2)
@@ -369,7 +369,7 @@ print("step =",step,"/",EPOCHS," error train = ",np.sum(np.square(error_w2))/2,"
 print("step =",step,"/",EPOCHS," error train = ",err_p_train,"%"," error test = ",err_p_test,"%")
 print("step =",step,"/",EPOCHS," max persent test = ",max_persent,"%")
 ```
-После завершения эпох обучения сохраняем полученные списки в файл для визуализации
+After the completion of the training epochs, save the resulting lists to a file for visualization 
 ```
 list_size = len(error_train_list)
 data = error_train_list
@@ -382,35 +382,35 @@ data = cp.ndarray.get(cp.reshape(data,(4,list_size)))
 
 np.savetxt('out.csv',data.T,delimiter=',',fmt='%.4f')
 ```
-Получил некоторые результаты.
+Got some results. 
 
-Использовал power1=2,power2=2,коэффициент скорости обучения равен 0.00001,количество эпох=3000.
+Used power1 = 2, power2 = 2, learning rate factor is 0.00001, number of epochs = 3000. 
 ![graph4](https://hsto.org/r/w1560/webt/ju/ua/xi/juuaxicrrvsqv8blkngnnvpwnko.png)
 ![graph5](https://hsto.org/r/w1560/webt/kh/jh/84/khjh84cfykcz_goycc52yho_1tc.png)
-Получил максимальную ошибку(в процентах) тестового набора error=58.6%
+Got max error(percentage) of test case error = 58.6%
 
-Использовал power1=3,power2=3,коэффициент скорости обучения равен 0.00001,количество эпох=3000.
+Used power1 = 3, power2 = 3, learning rate factor is 0.00001, number of epochs = 3000. 
 ![graph6](https://hsto.org/r/w1560/webt/gr/oi/ed/groied1jrjufdsr3jx68joe-wyu.png)
 ![graph7](https://hsto.org/r/w1560/webt/fu/cf/oz/fucfoz_jrbuyktteqcynf5ly-1g.png)
 
-Получил максимальную ошибку(в процентах) тестового набора error=61,6%
+Got max error(percentage) of test case error = 61.6%
 
-Использовал power1=4,power2=4,коэффициент скорости обучения равен 0.000001,количество эпох=60000.
+Used power1 = 4, power2 = 4, learning rate factor is 0.000001, number of epochs = 60,000. 
 ![graph8](https://hsto.org/r/w1560/webt/6k/h9/c1/6kh9c1rdquaz_gzhyhqg4wijgau.png)
 ![graph9](https://hsto.org/r/w1560/webt/fu/cf/oz/fucfoz_jrbuyktteqcynf5ly-1g.png)
-Получил максимальную ошибку(в процентах) тестового набора error=62.7%
+Got max error(percentage) of test suite error = 62.7%
 
-Использовал power1=5,power2=5,коэффициент скорости обучения равен 0.000001,количество эпох=90000.
+Used power1 = 5, power2 = 5, learning rate factor is 0.000001, number of epochs = 90000. 
 ![graph10](https://hsto.org/r/w1560/webt/l_/px/il/l_pxilkkoinxcujbs7osmtaxejc.png)
 ![graph11](https://hsto.org/r/w1560/webt/ci/px/_w/cipx_wiblosxgueorw2zxhza2yg.png)
-Получил максимальную ошибку (в процентах) тестового набора error=62.8%
-Зависимость максиальной точности тестового набора от степенного ряда.
+Got max error(percentage) of test suite error = 62.8%
+Dependence of the maximum accuracy of the test set on the power series. 
 ![graph12](https://hsto.org/r/w1560/webt/9l/p5/ae/9lp5ae9tibdy7n25yiopmtfxscw.png)
-Однако среднеквадратическая ошибка вела себя странно (наверно из-за степенного ряда)
+However, the root mean square error behaved strangely (probably due to the power series) 
 ![graph13](https://hsto.org/r/w1560/webt/fv/tg/1-/fvtg1-ewe4hgqejgdxgnticwnac.png)
-Вывод: Ошибка (в процентах) тестового обучающего набора при увеличении степенного ряда растет. Возможно, не быстро, на 0.1 или даже меньше, но с увеличением степенного ряда, количества эпох обучения и уменьшением скорости обучения можно добиться увеличения точности нейросети при работе с тестовым набором данных.
+Conclusion: The error (in percentage) of the test training set increases with increasing power series. Perhaps not quickly, by 0.1 or even less, but with an increase in the power series, the number of learning epochs and a decrease in the learning rate, it is possible to achieve an increase in the accuracy of the neural network when working with a test dataset. 
 
-Используемая литература
+Used Books 
 	1. Каниа Алексеевич Кан Нейронный сети. Эволюция
     2. Тарик Рашид.Создаем нейронную сеть.
     3. Использовалась статья Нейросеть в 11 строчек на Python 
